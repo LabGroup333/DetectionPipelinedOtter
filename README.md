@@ -96,8 +96,8 @@ Before beginning implementation, complete the following:
 
 ## Notes
 
-- This design **does not require a top-level wrapper or Basys 3 deployment**, but you can add those features later for real-time output.
-- Ensure that all new components are **tested in isolation** before full pipeline integration.
+- This design **does not require a top-level wrapper or Basys 3 deployment**, but we can add those features later
+- Ensure that all new components are **validated on their own** before full pipeline integration.
 - Use waveform analysis to debug stalls, flushes, and forwarding paths.
 
 ---
