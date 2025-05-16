@@ -1,0 +1,123 @@
+`timescale 1ns / 1ps
+//////////////////////////////////////////////////////////////////////////////////
+// Company: 
+// Engineer: 
+// 
+// Create Date: 05/15/2025 07:02:43 PM
+// Design Name: 
+// Module Name: HazardNoBranch_TB
+// Project Name: 
+// Target Devices: 
+// Tool Versions: 
+// Description: 
+// 
+// Dependencies: 
+// 
+// Revision:
+// Revision 0.01 - File Created
+// Additional Comments:
+// 
+//////////////////////////////////////////////////////////////////////////////////
+
+
+module HazardNoBranch_TB();
+
+    // Inputs
+    reg [31:0] PC_D;
+    reg [31:0] nextPC_E;
+    reg [31:0] targetPC_E;
+    reg [31:0] isr_D;
+    reg [31:0] isr_E;
+    reg [31:0] isr_M;
+    reg [2:0] PCsource;
+    reg RDwrite_E;
+    reg RDwrite_M;
+    reg take_branch;
+    reg MEMread2;
+
+    // Outputs
+    wire flush;
+    wire stall;
+
+    // Instantiate the Unit Under Test (UUT)
+    Hazard_Detection_Unit uut (
+        .PC_D(PC_D),
+        .nextPC_E(nextPC_E),
+        .targetPC_E(targetPC_E),
+        .isr_D(isr_D),
+        .isr_E(isr_E),
+        .isr_M(isr_M),
+        .PCsource(PCsource),
+        .RDwrite_E(RDwrite_E),
+        .RDwrite_M(RDwrite_M),
+        .take_branch(take_branch),
+        .MEMread2(MEMread2),
+        .flush(flush),
+        .stall(stall)
+    );
+
+    initial begin
+        // Initialize Inputs
+        PC_D = 0;
+        nextPC_E = 0;
+        targetPC_E = 0;
+        isr_D = 0;
+        isr_E = 0;
+        isr_M = 0;
+        PCsource = 0;
+        RDwrite_E = 0;
+        RDwrite_M = 0;
+        take_branch = 0;
+        MEMread2 = 0;
+
+        // Wait for global reset
+        #10;
+
+        // Test 1: No hazard, no branch
+        $display("Test 1: No hazard, no branch");
+        MEMread2 = 0;
+        isr_E = 32'h00000000;
+        isr_D = 32'h00000000;
+        take_branch = 0;
+        PCsource = 0;
+        targetPC_E = 32'h00000000;
+        nextPC_E = 32'h00000000;
+        #10;
+        $display("stall=%b, flush=%b", stall, flush);
+
+        // Test 2: Load-use hazard (stall expected)
+        $display("Test 2: Load-use hazard (stall expected)");
+        MEMread2 = 1;
+        isr_E = 32'h00000280; // [11:7] = 5
+        isr_D = 32'h00128000; // [19:15]=5, [24:20]=1
+        #10;
+        $display("stall=%b, flush=%b", stall, flush);
+
+        // Test 3: Branch taken, targetPC_E != nextPC_E (flush expected)
+        $display("Test 3: Branch taken, flush expected");
+        MEMread2 = 0;
+        take_branch = 1;
+        targetPC_E = 32'h00000010;
+        nextPC_E = 32'h00000020;
+        PCsource = 0;
+        #10;
+        $display("stall=%b, flush=%b", stall, flush);
+
+        // Test 4: PCsource != 0 (flush expected)
+        $display("Test 4: PCsource != 0, flush expected");
+        take_branch = 0;
+        PCsource = 3'b001;
+        #10;
+        $display("stall=%b, flush=%b", stall, flush);
+
+        // Test 5: No hazard, no flush
+        $display("Test 5: No hazard, no flush");
+        MEMread2 = 0;
+        take_branch = 0;
+        PCsource = 0;
+        #10;
+        $display("stall=%b, flush=%b", stall, flush);
+
+        $finish;
+    end
+endmodule
