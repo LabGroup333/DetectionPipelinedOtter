@@ -1,0 +1,57 @@
+`timescale 1ns / 1ps
+//////////////////////////////////////////////////////////////////////////////////
+// Company: 
+// Engineer: 
+// 
+// Create Date: 05/15/2025 04:39:55 PM
+// Design Name: 
+// Module Name: Hazard_Detection_Unit
+// Project Name: 
+// Target Devices: 
+// Tool Versions: 
+// Description: 
+// 
+// Dependencies: 
+// 
+// Revision:
+// Revision 0.01 - File Created
+// Additional Comments:
+// 
+//////////////////////////////////////////////////////////////////////////////////
+
+
+module Hazard_Detection_Unit(
+input [31:0] PC_D,
+input [31:0] nextPC_E,
+input [31:0] targetPC_E,
+input [31:0] isr_D,
+input [31:0] isr_E,
+input [31:0] isr_M,
+input [2:0] PCsource,
+input RDwrite_E,
+input RDwrite_M,
+input take_branch,
+input MEMread2,
+output logic flush,
+output logic stall
+    );
+    
+    always_comb begin
+    
+    if (MEMread2 && (isr_E[11:7] != 0) &&
+    ((isr_E[11:7] == isr_D[19:15]) ||
+     (isr_E[11:7] == isr_D[24:20]))) 
+    begin
+        stall = 1'b1;
+    end else begin
+        stall = 1'b0;
+    end
+    
+    if ((take_branch && (targetPC_E != nextPC_E)) || PCsource != 0) begin
+    flush = 1'b1;
+    end else begin
+    flush = 1'b0;
+    end
+
+    end
+endmodule
