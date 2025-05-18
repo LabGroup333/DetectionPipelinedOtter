@@ -1,0 +1,78 @@
+`timescale 1ns / 1ps
+//////////////////////////////////////////////////////////////////////////////////
+// Company: 
+// Engineer: 
+// 
+// Create Date: 05/15/2025 04:17:34 PM
+// Design Name: 
+// Module Name: Branch_Condition_Generator
+// Project Name: 
+// Target Devices: 
+// Tool Versions: 
+// Description: 
+// 
+// Dependencies: 
+// 
+// Revision:
+// Revision 0.01 - File Created
+// Additional Comments:
+// 
+//////////////////////////////////////////////////////////////////////////////////
+
+
+module Branch_Condition_Generator(
+    input [31:0] RS1_E,
+    input [31:0] RS2_E,
+    input [31:0] IR_E,
+    output reg take_branch
+    );
+    always_comb begin
+            case(IR_E[14:12])
+                    3'b000: begin
+                        if (RS1_E == RS2_E) //BEQ
+                            take_branch = 1;
+                        else
+                            take_branch = 0; 
+                    end
+                    3'b001: begin 
+                        if (RS1_E != RS2_E) //BNE
+                            take_branch = 1;
+                        else
+                            take_branch = 0; 
+                    end
+                    3'b100: begin 
+                        if (RS1_E <= RS2_E) //BLT
+                            take_branch = 1;
+                        else
+                            take_branch = 0;
+                    end
+                    3'b101: begin 
+                        if (RS1_E >= RS2_E) //BGE
+                            take_branch = 1;
+                        else
+                            take_branch = 0;
+                    end
+                    3'b110: begin 
+                        if ($unsigned(RS1_E) <= $unsigned(RS2_E)) //BLTU
+                            take_branch = 1;
+                        else
+                            take_branch = 0;
+                    end
+                    3'b111: begin 
+                        if ($unsigned(RS1_E) >= $unsigned(RS2_E)) //BGEU
+                            take_branch = 1;
+                        else
+                            take_branch = 0;
+                    end
+                    default : begin 
+                        take_branch = 0; 
+                    end
+                endcase
+    end
+
+
+//assign br_eq = (BCG_A == BCG_B); 
+//assign br_ltu = ($unsigned(BCG_A) < $unsigned(BCG_B)); 
+//assign br_lt = ($signed(BCG_A) < $signed(BCG_B)); 
+
+endmodule
