@@ -41,30 +41,30 @@ module Branch_Condition_Generator(
                             take_branch = 0; 
                     end
                     3'b100: begin 
-                        if (RS1_E <= RS2_E) //BLT
+                        if ($signed(RS1_E) < $signed(RS2_E)) //BLT
                             take_branch = 1;
                         else
                             take_branch = 0;
                     end
                     3'b101: begin 
-                        if (RS1_E >= RS2_E) //BGE
+                        if ($signed(RS1_E) >= $signed(RS2_E)) //BGE
                             take_branch = 1;
                         else
                             take_branch = 0;
                     end
                     3'b110: begin 
-                        if ($unsigned(RS1_E) <= $unsigned(RS2_E)) //BLTU
+                        if ($unsigned(RS1_E) < $unsigned(RS2_E)) //BLTU
                             take_branch = 1;
                         else
                             take_branch = 0;
                     end
                     3'b111: begin 
-                        if ($unsigned(RS1_E) >= $unsigned(RS2_E)) //BGEU
+                        if ($unsigned(RS1_E) > $unsigned(RS2_E)) //BGEU
                             take_branch = 1;
                         else
                             take_branch = 0;
                     end
-                    default : begin 
+                    default: begin 
                         take_branch = 0; 
                     end
                 endcase
