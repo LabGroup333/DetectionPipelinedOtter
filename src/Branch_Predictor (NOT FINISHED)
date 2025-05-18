@@ -1,0 +1,90 @@
+`timescale 1ns / 1ps
+//////////////////////////////////////////////////////////////////////////////////
+// Company: 
+// Engineer: 
+// 
+// Create Date: 05/18/2025 01:07:41 PM
+// Design Name: 
+// Module Name: Branch_Predictor
+// Project Name: 
+// Target Devices: 
+// Tool Versions: 
+// Description: 
+// 
+// Dependencies: 
+// 
+// Revision:
+// Revision 0.01 - File Created
+// Additional Comments:
+// 
+//////////////////////////////////////////////////////////////////////////////////
+
+
+module Branch_Predictor(
+    input rst,
+    input [31:0] nextPC_F,
+    input [31:0] PC_D,
+    input [31:0] fdw_rs1data_D,
+    input [31:0] fdw_rs2data_D,
+    input take_branch,
+    input flush,
+    input stall,
+    input [31:0] targetPC_D,
+    input jump_flag,
+    input [31:0] IR_D,    
+    output logic [3:0] PCsel
+    );
+    
+    always_comb begin
+    if (rst == 1) begin
+        PCsel = 0;
+    end 
+    else begin
+        case(IR_D[6:0])
+            7'b1101111: // JAL
+        begin
+            PCsel = 3'b001;
+        end
+        7'b1100111: begin // JALR
+            PCsel = 3'b100;
+        end
+        7'b1100011 : begin // BRANCH
+        //predicts false
+        PCsel = 0;
+        
+        
+        
+//            case(IR_D[14:12])
+//                    3'b000: begin //BEQ
+                        
+//                    end
+//                    3'b001: begin //BNE
+                        
+//                    end
+//                    3'b100: begin //BLT
+                        
+//                    end
+//                    3'b101: begin //BGE
+                        
+//                    end
+//                    3'b110: begin //BLTU
+                        
+//                    end
+//                    3'b111: begin //BGEU
+                        
+//                    end
+//                    default: begin 
+                        
+//                    end
+//            endcase
+            end 
+        endcase
+        end
+    end
+    //always flush on jumps
+    // always stall on branch not taken. additionally flush if taken
+    
+    
+    
+    
+endmodule
