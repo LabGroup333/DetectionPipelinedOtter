@@ -1,0 +1,38 @@
+`timescale 1ns / 1ps
+//////////////////////////////////////////////////////////////////////////////////
+// Company: 
+// Engineer: 
+// 
+// Create Date: 05/17/2025 12:39:17 PM
+// Design Name: 
+// Module Name: Target_PC_Generator
+// Project Name: 
+// Target Devices: 
+// Tool Versions: 
+// Description: 
+// 
+// Dependencies: 
+// 
+// Revision:
+// Revision 0.01 - File Created
+// Additional Comments:
+// 
+//////////////////////////////////////////////////////////////////////////////////
+
+
+module Target_PC_Generator(
+input [1:0] PCoffset_sel,
+input imm_I,
+input imm_B,
+input fwd_rs1data_D,
+input PC_D,
+output logic targetPC_D
+    );
+    always_comb begin
+    case(PCoffset_sel)
+        2'b00 : targetPC_D = imm_I + fwd_rs1data_D; //jalr
+        2'b01 : targetPC_D = PC_D + imm_B; //branch
+        2'b10 : targetPC_D = PC_D + imm_I; //jal
+    endcase
+    end
+endmodule
